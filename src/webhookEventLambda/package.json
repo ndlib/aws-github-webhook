@@ -1,0 +1,25 @@
+{
+  "name": "aws-github-webhook-event-lambda",
+  "author": "Hesburgh Libraries - WSE <web-and-software-engineering-group@nd.edu> (https://library.nd.edu)",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndlib/aws-github-webhook.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ndlib/aws-github-webhook/issues"
+  },
+  "homepage": "https://github.com/ndlib/aws-github-webhook#readme",
+  "keywords": [
+    "aws",
+    "cdk",
+    "ndlib"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}

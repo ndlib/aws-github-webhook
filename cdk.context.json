@@ -1,0 +1,13 @@
+{
+  "owner": "wse",
+  "contact": "web-and-software-engineering-group@nd.edu",
+  "projectName": "aws-github-webhook",
+  "description": "Deploys a lambda for handling the management of GitHub webhooks as a Custom Resource.",
+
+  "stage": "dev",
+  "gitSecretPath": "/all/github/ndlib-git",
+
+  "infraRepoOwner": "ndlib",
+  "infraRepoName": "aws-github-webhook",
+  "infraSourceBranch": "main"
+}
