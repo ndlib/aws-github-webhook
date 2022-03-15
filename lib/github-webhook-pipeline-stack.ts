@@ -1,20 +1,15 @@
-import codepipeline = require('@aws-cdk/aws-codepipeline')
-import {
-  CodeBuildAction,
-  GitHubSourceAction,
-  GitHubTrigger,
-  ManualApprovalAction,
-} from '@aws-cdk/aws-codepipeline-actions'
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam'
-import { Topic } from '@aws-cdk/aws-sns'
-import * as cdk from '@aws-cdk/core'
-import { ArtifactBucket, PipelineNotifications, SlackApproval } from '@ndlib/ndlib-cdk'
+import { App, SecretValue, Stack, StackProps } from 'aws-cdk-lib'
+import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline'
+import { CodeBuildAction, GitHubSourceAction, GitHubTrigger, ManualApprovalAction } from 'aws-cdk-lib/aws-codepipeline-actions'
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
+import { Topic } from 'aws-cdk-lib/aws-sns'
+import { ArtifactBucket, PipelineNotifications, SlackApproval } from '@ndlib/ndlib-cdk2'
 import GitHubWebhookBuildProject from './github-webhook-build-project'
 import GitHubWebhookBuildRole from './github-webhook-build-role'
 
 const stages = ['test', 'prod']
 
-export interface IGitHubWebhookPipelineStackProps extends cdk.StackProps {
+export interface IGitHubWebhookPipelineStackProps extends StackProps {
   readonly contact: string
   readonly owner: string
   readonly stackNamePrefix: string
@@ -26,8 +21,8 @@ export interface IGitHubWebhookPipelineStackProps extends cdk.StackProps {
   readonly notificationReceivers?: string
 }
 
-export class GitHubWebhookPipelineStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: IGitHubWebhookPipelineStackProps) {
+export class GitHubWebhookPipelineStack extends Stack {
+  constructor(scope: App, id: string, props: IGitHubWebhookPipelineStackProps) {
     super(scope, id, props)
 
     // S3 BUCKET FOR STORING ARTIFACTS
@@ -35,7 +30,7 @@ export class GitHubWebhookPipelineStack extends cdk.Stack {
 
     // IAM ROLES
     const codepipelineRole = new Role(this, 'CodePipelineRole', {
-      assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
+      assumedBy: new ServicePrincipal('amazonaws.com'),
     })
     const codebuildRole = new GitHubWebhookBuildRole(this, 'CodeBuildTrustRole', {
       assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
@@ -46,7 +41,7 @@ export class GitHubWebhookPipelineStack extends cdk.Stack {
     })
 
     // CREATE PIPELINE
-    const pipeline = new codepipeline.Pipeline(this, 'CodePipeline', {
+    const pipeline = new Pipeline(this, 'CodePipeline', {
       artifactBucket,
       role: codepipelineRole,
     })
@@ -58,13 +53,13 @@ export class GitHubWebhookPipelineStack extends cdk.Stack {
     }
 
     // SOURCE BLUEPRINTS
-    const infraSourceArtifact = new codepipeline.Artifact('InfraCode')
+    const infraSourceArtifact = new Artifact('InfraCode')
     const infraSourceAction = new GitHubSourceAction({
       actionName: 'SourceInfraCode',
       owner: props.infraRepoOwner,
       repo: props.infraRepoName,
       branch: props.infraSourceBranch,
-      oauthToken: cdk.SecretValue.secretsManager(props.gitSecretPath, { jsonField: 'oauth' }),
+      oauthToken: SecretValue.secretsManager(props.gitSecretPath, { jsonField: 'oauth' }),
       output: infraSourceArtifact,
       trigger: GitHubTrigger.WEBHOOK,
     })

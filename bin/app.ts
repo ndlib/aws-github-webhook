@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
-import * as cdk from '@aws-cdk/core'
-import { StackTags } from '@ndlib/ndlib-cdk'
+import { App, Aspects } from 'aws-cdk-lib'
+import { StackTags } from '@ndlib/ndlib-cdk2'
 import { GitHubWebhookResourceStack } from '../lib/github-webhook-resource-stack'
 import { GitHubWebhookPipelineStack } from '../lib/github-webhook-pipeline-stack'
 
-const app = new cdk.App()
-cdk.Aspects.of(app).add(new StackTags())
+const app = new App()
+Aspects.of(app).add(new StackTags())
 
 const stackPrefix = app.node.tryGetContext('stackNamePrefix') || 'github-webhook-custom-resource'
 const gitSecretPath = app.node.tryGetContext('gitSecretPath')

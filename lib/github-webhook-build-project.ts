@@ -1,8 +1,8 @@
-import codebuild = require('@aws-cdk/aws-codebuild')
-import { Role } from '@aws-cdk/aws-iam'
-import cdk = require('@aws-cdk/core')
+import { Construct } from 'constructs'
+import { BuildEnvironmentVariableType, BuildSpec, LinuxBuildImage, PipelineProject, PipelineProjectProps } from 'aws-cdk-lib/aws-codebuild'
+import { Role } from 'aws-cdk-lib/aws-iam'
 
-export interface IGitHubWebhookBuildProjectProps extends codebuild.PipelineProjectProps {
+export interface IGitHubWebhookBuildProjectProps extends PipelineProjectProps {
   readonly stackNamePrefix: string
   readonly stage: string
   readonly role: Role
@@ -10,21 +10,21 @@ export interface IGitHubWebhookBuildProjectProps extends codebuild.PipelineProje
   readonly owner: string
 }
 
-export default class GitHubWebhookBuildProject extends codebuild.PipelineProject {
-  constructor(scope: cdk.Construct, id: string, props: IGitHubWebhookBuildProjectProps) {
+export default class GitHubWebhookBuildProject extends PipelineProject {
+  constructor(scope: Construct, id: string, props: IGitHubWebhookBuildProjectProps) {
     const stackName = `${props.stackNamePrefix}-${props.stage}`
     const projectProps = {
       environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+        buildImage: LinuxBuildImage.STANDARD_5_0,
         environmentVariables: {
           CI: {
             value: 'true',
-            type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+            type: BuildEnvironmentVariableType.PLAINTEXT,
           },
         },
       },
       role: props.role,
-      buildSpec: codebuild.BuildSpec.fromObject({
+      buildSpec: BuildSpec.fromObject({
         version: '0.2',
         phases: {
           install: {
