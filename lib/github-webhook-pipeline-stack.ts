@@ -30,7 +30,7 @@ export class GitHubWebhookPipelineStack extends Stack {
 
     // IAM ROLES
     const codepipelineRole = new Role(this, 'CodePipelineRole', {
-      assumedBy: new ServicePrincipal('amazonaws.com'),
+      assumedBy: new ServicePrincipal('codepipeline.amazonaws.com'),
     })
     const codebuildRole = new GitHubWebhookBuildRole(this, 'CodeBuildTrustRole', {
       assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
