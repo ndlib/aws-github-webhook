@@ -1,7 +1,7 @@
-import { PolicyStatement, Role, RoleProps } from '@aws-cdk/aws-iam'
-import { Bucket } from '@aws-cdk/aws-s3'
-import cdk = require('@aws-cdk/core')
-import { Fn } from '@aws-cdk/core'
+import { Construct } from 'constructs'
+import { Fn } from 'aws-cdk-lib'
+import { PolicyStatement, Role, RoleProps } from 'aws-cdk-lib/aws-iam'
+import { Bucket } from 'aws-cdk-lib/aws-s3'
 
 export interface IGitHubWebhookBuildRoleProps extends RoleProps {
   readonly stackNamePrefix: string
@@ -11,7 +11,7 @@ export interface IGitHubWebhookBuildRoleProps extends RoleProps {
 }
 
 export class GitHubWebhookBuildRole extends Role {
-  constructor(scope: cdk.Construct, id: string, props: IGitHubWebhookBuildRoleProps) {
+  constructor(scope: Construct, id: string, props: IGitHubWebhookBuildRoleProps) {
     super(scope, id, props)
 
     const serviceStacks = props.stages.map(stage => `${props.stackNamePrefix}-${stage}`)
