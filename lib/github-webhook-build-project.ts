@@ -28,10 +28,11 @@ export default class GitHubWebhookBuildProject extends PipelineProject {
         version: '0.2',
         phases: {
           install: {
-            'runtime-versions': {
-              nodejs: '14.x',
-            },
+            // 'runtime-versions': {
+            //   nodejs: '14.x',
+            // },
             commands: [
+              'n stable',
               'chmod -R 755 ./setup.sh',
               './setup.sh',
             ],
