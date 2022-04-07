@@ -67,13 +67,13 @@ export class GitHubWebhookBuildRole extends Role {
     // Allow storing artifacts in S3 buckets
     this.addToPolicy(
       new PolicyStatement({
-        resources: [props.artifactBucket.bucketArn, 'arn:aws:s3:::cdktoolkit-stagingbucket-*'],
+        resources: [props.artifactBucket.bucketArn, 'arn:aws:s3:::cdktoolkit-stagingbucket-*', 'arn:aws:s3:::cdk-*'],
         actions: ['s3:ListBucket', 's3:ListBucketVersions', 's3:GetBucketLocation', 's3:GetBucketPolicy'],
       }),
     )
     this.addToPolicy(
       new PolicyStatement({
-        resources: [props.artifactBucket.bucketArn + '/*', 'arn:aws:s3:::cdktoolkit-stagingbucket-*/*'],
+        resources: [props.artifactBucket.bucketArn + '/*', 'arn:aws:s3:::cdktoolkit-stagingbucket-*/*', 'arn:aws:s3:::cdk-*/*'],
         actions: ['s3:GetObject', 's3:PutObject'],
       }),
     )
@@ -115,6 +115,20 @@ export class GitHubWebhookBuildRole extends Role {
       }),
     )
 
+    // Add permission for CDK 2 deployments
+    this.addToPolicy(new PolicyStatement({
+      actions: [
+        'sts:AssumeRole',
+        'iam:PassRole',
+      ],
+      resources: [
+        'arn:aws:iam::*:role/cdk-readOnlyRole',
+        'arn:aws:iam::*:role/cdk-hnb659fds-deploy-role-*',
+        'arn:aws:iam::*:role/cdk-hnb659fds-file-publishing-*',
+        'arn:aws:iam::*:role/cdk-hnb659fds-image-publishing-*',
+      ],
+    }))
+
     // Allow getting needed secrets from SecretsManager
     this.addToPolicy(
       new PolicyStatement({
@@ -127,6 +141,18 @@ export class GitHubWebhookBuildRole extends Role {
           'secretsmanager:ListSecretVersionIds',
         ],
       }),
+    )
+
+    // Allow getting SSM parameters
+    this.addToPolicy(
+      new PolicyStatement({
+        resources: [
+          Fn.sub('arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdk-bootstrap/*'),
+        ],
+        actions: [
+          'ssm:GetParameter',
+        ],
+      })
     )
   }
 }
