@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Run CI
-      run: npm ci
+      run: yarn install --frozen-lockfile
     - name: Build
       run: npm run build --if-present
 # Can't run tests that don't exist; enable this when tests are written
