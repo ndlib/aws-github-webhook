@@ -22,7 +22,7 @@ exports.createPayload = (properties) => {
     events: events,
     config: {
       url: endpoint,
-      content_type: properties.ContentType || 'json',
+      content_type: properties.ContentType || 'application/json',
       secret: process.env.WEBHOOK_SECRET,
     },
   })
